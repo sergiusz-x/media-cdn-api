@@ -1,3 +1,7 @@
+webhooks.json
+bot_tokens.json
+
+
 # Logs
 logs
 *.log

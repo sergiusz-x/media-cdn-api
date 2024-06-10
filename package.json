@@ -1,0 +1,30 @@
+{
+  "name": "media-cdn-api",
+  "version": "1.0.0",
+  "description": "MediaCDN API using Discord as storage",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js",
+    "test": "mocha ./tests/test_v1.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergiusz-x/media-cdn-api.git"
+  },
+  "author": "sergiusz-x",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sergiusz-x/media-cdn-api/issues"
+  },
+  "homepage": "https://github.com/sergiusz-x/media-cdn-api#readme",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.0",
+    "path": "^0.12.7"
+  }
+}

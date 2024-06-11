@@ -4,7 +4,7 @@ const Logger = require("../utils/logger")
 const { wait } = require("../utils/functions")
 const logger = new Logger({ file: __filename })
 const Image = require("../models/Image")
-const axios = require('axios')
+const axios = require("axios")
 //
 let clients = []
 let current_client_index = -1
@@ -14,6 +14,9 @@ function get_client_index() {
     return current_client_index
 }
 //
+/**
+ * Log in all Discord bots 
+ */
 async function start() {
     let all_webhook_channels_id = Object.keys(config.webhooks_data.channels)
     //
@@ -29,7 +32,7 @@ async function start() {
             })
             //
             if(if_cannot_view_all_channels) {
-                logger.error(`Bot [${index}] with token ending with: "${token.slice(-5)}" doesn't have access to all webhooks channels`)
+                logger.error(`Bot [${index}] with token ending with: "${token.slice(-5)}" doesn"t have access to all webhooks channels`)
             } else {
                 clients.push(client)
             }
@@ -48,10 +51,11 @@ async function start() {
     }
     //
     if(clients.length == 0) throw new Error("No bots found")
+    logger.log(`Successfully logged ${clients.length} bots`)
 }
 //
 /**
- * Sends an image to a webhook and returns an Image object.
+ * Sends an image to a webhook and returns an Image object
  * @param {Image} image
  * @returns {Promise<Image>}
  */
@@ -59,19 +63,24 @@ async function fetch_image_from_channel(image) {
     return new Promise(async (res, err) => {
         if(!image) return err(`No image passed [${image.database_id}]`)
         //
+        // Waits if bots are not ready yet
+        while(clients.length == 0) {
+            await wait(50)
+        }
         const client_index = get_client_index()
         //
         const channel = clients[client_index].channels.cache.get(image.channel_id)
-        if(!channel) res(`Channel not found [${image.database_id}]`)
+        if(!channel) return err(`Channel not found [${image.database_id}]`)
         //
         const message = await channel.messages.fetch(image.message_id).then(message => { return message }).catch(err => { return undefined })
-        if(!message) res(`Message not found [${image.database_id}]`)
+        if(!message) return err(`Message not found [${image.database_id}]`)
         //
+        if(!message.attachments.first()) await message.fetch()
         const attachment = message.attachments.first()
-        if(!attachment) res(`Attachment not found [${image.database_id}]`)
+        if(!attachment) return err(`Attachment not found [${image.database_id}]`)
         //
-        const image_response = await axios.get(attachment.url, { responseType: 'arraybuffer' }).catch(err => { err(err) })
-        const image_buffer = Buffer.from(image_response.data, 'binary')
+        const image_response = await axios.get(attachment.url, { responseType: "arraybuffer" }).catch(err => { err(err) })
+        const image_buffer = Buffer.from(image_response.data, "binary")
         //
         image.fill({ base64_image: image_buffer.toString("base64") })
         //

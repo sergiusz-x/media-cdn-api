@@ -5,15 +5,15 @@ class Logger {
     constructor(options = {}) {
         this.file = options.file || null
     }
-
+    //
     log(...args) {
-        this._logMessage('log', ...args)
+        this._logMessage("log", ...args)
     }
-
+    //
     error(...args) {
-        this._logMessage('error', ...args)
+        this._logMessage("error", ...args)
     }
-
+    //
     _logMessage(level, ...args) {
         const time_log = new Date().toLocaleString("pl-PL", { hour12: false })
         //

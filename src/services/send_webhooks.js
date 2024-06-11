@@ -4,6 +4,7 @@ const Logger = require("../utils/logger")
 const { random_hash } = require("../utils/functions")
 const logger = new Logger({ file: __filename })
 const Image = require("../models/Image")
+const { compress_image } = require("../utils/compress_image")
 //
 let webhooks = []
 let current_webhook_index = -1
@@ -13,6 +14,9 @@ function get_webhook_index() {
     return current_webhook_index
 }
 //
+/**
+ * Creats webhooks and appends them to array
+ */
 async function start() {
     //
     // Creating webhook clients
@@ -49,6 +53,7 @@ async function start() {
     }
     //
     if(webhooks.length == 0) throw new Error("No webhooks found")
+    logger.log(`Successfully loaded ${webhooks.length} webhooks`)
     //
 }
 //
@@ -62,9 +67,11 @@ async function send_image(image_base64) {
         const image_hash_id = random_hash()
         //
         try {
+            image_base64 = await compress_image(image_base64)
+            //
             const attachment = new AttachmentBuilder(Buffer.from(image_base64, "base64"), { name: `${image_hash_id}.jpg` })
             //
-            webhooks[webhook_index].send({ files: [attachment] }).then(message => {
+            webhooks[webhook_index].send({ files: [attachment], content: `${attachment.name}` }).then(message => {
                 const image = new Image(image_hash_id, undefined, image_base64, Date.now(), message.channel_id, message.id)
                 res(image)
             }).catch(error => {

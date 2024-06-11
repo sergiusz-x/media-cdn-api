@@ -1,8 +1,8 @@
 const path = require("path")
-require('dotenv').config({ path: path.join(__dirname, "../../.env") })
+require("dotenv").config({ path: path.join(__dirname, "../../.env") })
 const webhooks_data = require("./webhooks.json")
 const bot_tokens = require("./bot_tokens.json")
-
+//
 module.exports = {
     port_http: process.env.PORT_HTTP || 3000,
     port_https: process.env.PORT_HTTPS || 3001,

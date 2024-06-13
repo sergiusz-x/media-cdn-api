@@ -5,7 +5,6 @@ const bot_tokens = require("./bot_tokens.json")
 //
 module.exports = {
     port_http: process.env.PORT_HTTP || 3000,
-    port_https: process.env.PORT_HTTPS || 3001,
     webhooks_data: webhooks_data,
     mysql_db_config: {
         host: process.env.MYSQL_HOST,
